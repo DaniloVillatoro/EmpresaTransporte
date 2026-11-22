@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Empresa de Transporte</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <h2>TransporteApp</h2>
+                <span>Panel Operativo</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#buses" class="nav-link active" data-seccion="buses">Flota / Buses</a>
+                <a href="#rutas" class="nav-link" data-seccion="rutas">Rutas y Terminales</a>
+                <a href="#horarios" class="nav-link" data-seccion="horarios">Horarios</a>
+                <a href="#boletos" class="nav-link" data-seccion="boletos">Venta de Boletos</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <h1 id="titulo-seccion">Gestión de Flota (Buses)</h1>
+                    <p id="subtitulo-seccion">Registro y control de unidades, capacidades y estados</p>
+                </div>
+                <div class="estado-conexion" id="estado-api">Listo para conectar</div>
+            </header>
+
+            <!-- SECCIÓN 1: BUSES -->
+            <section id="seccion-buses" class="seccion activa">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Registrar Nuevo Bus</h3>
+                        <form id="form-bus" class="formulario">
+                            <div class="campo">
+                                <label for="placa">Placa</label>
+                                <input type="text" id="placa" name="placa" placeholder="Ej. HND-1024" required>
+                            </div>
+                            <div class="campo">
+                                <label for="marca">Marca</label>
+                                <input type="text" id="marca" name="marca" placeholder="Ej. Mercedes-Benz">
+                            </div>
+                            <div class="campo">
+                                <label for="modelo">Modelo</label>
+                                <input type="text" id="modelo" name="modelo" placeholder="Ej. Sprinter / Marcopolo">
+                            </div>
+                            <div class="campo">
+                                <label for="anio">Año</label>
+                                <input type="number" id="anio" name="anio" min="1900" max="2100" placeholder="Ej. 2022">
+                            </div>
+                            <div class="campo">
+                                <label for="tipoBus">Tipo de Bus</label>
+                                <input type="text" id="tipoBus" name="tipoBus" placeholder="Ej. Ejecutivo, Pullman">
+                            </div>
+                            <div class="campo">
+                                <label for="capacidad">Capacidad (Asientos)</label>
+                                <input type="number" id="capacidad" name="capacidad" min="1" required>
+                            </div>
+                            <div class="campo">
+                                <label for="estadoBus">Estado</label>
+                                <select id="estadoBus" name="estado">
+                                    <option value="Disponible">Disponible</option>
+                                    <option value="En ruta">En ruta</option>
+                                    <option value="Mantenimiento">Mantenimiento</option>
+                                    <option value="Inactivo">Inactivo</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primario">Guardar Bus</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Buses Registrados</h3>
+                        <div class="tabla-contenedor">
+                            <table class="tabla" id="tabla-buses">
+                                <thead>
+                                    <tr>
+                                        <th>Placa</th>
+                                        <th>Unidad</th>
+                                        <th>Cap.</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="4" class="vacio">Sin datos cargados todavía.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 2: RUTAS -->
+            <section id="seccion-rutas" class="seccion">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Registrar Nueva Ruta</h3>
+                        <form id="form-ruta" class="formulario">
+                            <div class="campo">
+                                <label for="nombreRuta">Nombre de la Ruta</label>
+                                <input type="text" id="nombreRuta" name="nombreRuta" placeholder="Ej. Express Mañana" required>
+                            </div>
+                            <div class="campo">
+                                <label for="terminalOrigen">ID Terminal Origen</label>
+                                <input type="number" id="terminalOrigen" name="terminalOrigen" min="1" required>
+                            </div>
+                            <div class="campo">
+                                <label for="terminalDestino">ID Terminal Destino</label>
+                                <input type="number" id="terminalDestino" name="terminalDestino" min="1" required>
+                            </div>
+                            <div class="campo">
+                                <label for="distanciaKm">Distancia (Km)</label>
+                                <input type="number" id="distanciaKm" name="distanciaKm" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="campo">
+                                <label for="duracionEstimada">Duración Estimada</label>
+                                <input type="time" id="duracionEstimada" name="duracionEstimada" required>
+                            </div>
+                            <div class="campo">
+                                <label for="estadoRuta">Estado</label>
+                                <select id="estadoRuta" name="estado">
+                                    <option value="Activa">Activa</option>
+                                    <option value="Inactiva">Inactiva</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primario">Guardar Ruta</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Rutas Registradas</h3>
+                        <div class="tabla-contenedor">
+                            <table class="tabla" id="tabla-rutas">
+                                <thead>
+                                    <tr>
+                                        <th>Ruta</th>
+                                        <th>Origen → Destino</th>
+                                        <th>Distancia</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="4" class="vacio">Sin rutas cargadas todavía.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 3: HORARIOS -->
+            <section id="seccion-horarios" class="seccion">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Programar Horario</h3>
+                        <form id="form-horario" class="formulario">
+                            <div class="campo">
+                                <label for="idRutaHorario">ID Ruta</label>
+                                <input type="number" id="idRutaHorario" name="idRuta" min="1" required>
+                            </div>
+                            <div class="campo">
+                                <label for="idBusHorario">ID Bus</label>
+                                <input type="number" id="idBusHorario" name="idBus" min="1" required>
+                            </div>
+                            <div class="campo">
+                                <label for="idConductorHorario">ID Conductor</label>
+                                <input type="number" id="idConductorHorario" name="idConductor" min="1" required>
+                            </div>
+                            <div class="campo">
+                                <label for="fechaSalida">Fecha Salida</label>
+                                <input type="date" id="fechaSalida" name="fechaSalida" required>
+                            </div>
+                            <div class="campo">
+                                <label for="horaSalida">Hora Salida</label>
+                                <input type="time" id="horaSalida" name="horaSalida" required>
+                            </div>
+                            <div class="campo">
+                                <label for="fechaLlegada">Fecha Llegada</label>
+                                <input type="date" id="fechaLlegada" name="fechaLlegada" required>
+                            </div>
+                            <div class="campo">
+                                <label for="horaLlegada">Hora Llegada</label>
+                                <input type="time" id="horaLlegada" name="horaLlegada" required>
+                            </div>
+                            <div class="campo">
+                                <label for="estadoHorario">Estado</label>
+                                <select id="estadoHorario" name="estado">
+                                    <option value="Programado">Programado</option>
+                                    <option value="En curso">En curso</option>
+                                    <option value="Finalizado">Finalizado</option>
+                                    <option value="Cancelado">Cancelado</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primario">Programar Horario</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Horarios Programados</h3>
+                        <div class="tabla-contenedor">
+                            <table class="tabla" id="tabla-horarios">
+                                <thead>
+                                    <tr>
+                                        <th>Ruta / Bus</th>
+                                        <th>Salida</th>
+                                        <th>Llegada</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="4" class="vacio">Sin horarios cargados todavía.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 4: BOLETOS -->
+            <section id="seccion-boletos" class="seccion">
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Emitir Boleto</h3>
+                        <form id="form-boleto" class="formulario">
+                            <div class="campo">
+                                <label for="idClienteBoleto">ID Cliente</label>
+                                <input type="number" id="idClienteBoleto" name="idCliente" min="1" required>
+                            </div>
+                            <div class="campo">
+                                <label for="idDisponibilidadBoleto">ID Disponibilidad Asiento</label>
+                                <input type="number" id="idDisponibilidadBoleto" name="idDisponibilidad" min="1" required>
+                            </div>
+                            <div class="campo">
+                                <label for="precioBoleto">Precio</label>
+                                <input type="number" id="precioBoleto" name="precio" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="campo">
+                                <label for="metodoCompra">Método de Compra</label>
+                                <select id="metodoCompra" name="metodoCompra">
+                                    <option value="Taquilla">Taquilla</option>
+                                    <option value="En linea">En linea</option>
+                                </select>
+                            </div>
+                            <div class="campo">
+                                <label for="estadoBoleto">Estado</label>
+                                <select id="estadoBoleto" name="estado">
+                                    <option value="Pendiente">Pendiente</option>
+                                    <option value="Pagado">Pagado</option>
+                                    <option value="Cancelado">Cancelado</option>
+                                    <option value="Reembolsado">Reembolsado</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primario">Emitir Boleto</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <h3>Boletos Emitidos</h3>
+                        <div class="tabla-contenedor">
+                            <table class="tabla" id="tabla-boletos">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Cliente / Asiento</th>
+                                        <th>Precio</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="4" class="vacio">Sin boletos emitidos todavía.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const enlaces = document.querySelectorAll('.nav-link');
+        const secciones = document.querySelectorAll('.seccion');
+        const titulo = document.getElementById('titulo-seccion');
+        const subtitulo = document.getElementById('subtitulo-seccion');
+        const estadoApi = document.getElementById('estado-api');
+
+        const infoSecciones = {
+            buses: {
+                titulo: 'Gestión de Flota (Buses)',
+                subtitulo: 'Registro y control de unidades, capacidades y estados'
+            },
+            rutas: {
+                titulo: 'Gestión de Rutas y Terminales',
+                subtitulo: 'Rutas activas, terminales de origen/destino y distancias'
+            },
+            horarios: {
+                titulo: 'Programación de Horarios',
+                subtitulo: 'Asignación de rutas, buses, conductores y salidas/llegadas'
+            },
+            boletos: {
+                titulo: 'Venta y Control de Boletos',
+                subtitulo: 'Emisión de boletos, disponibilidad de asientos y estados'
+            }
+        };
+
+        enlaces.forEach(enlace => {
+            enlace.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = enlace.dataset.seccion;
+
+                enlaces.forEach(item => item.classList.remove('active'));
+                enlace.classList.add('active');
+
+                secciones.forEach(sec => sec.classList.remove('activa'));
+                document.getElementById('seccion-' + target).classList.add('activa');
+
+                if (infoSecciones[target]) {
+                    titulo.textContent = infoSecciones[target].titulo;
+                    subtitulo.textContent = infoSecciones[target].subtitulo;
+                }
+            });
+        });
+
+        // Ruta base de tu API REST (en proyectos Jakarta REST suele ser "api/" o "resources/")
+        const API_BASE = '/mavenproject3/resources';
+
+        async function cargarBuses() {
+            const tbody = document.querySelector('#tabla-buses tbody');
+            try {
+                const res = await fetch(`${API_BASE}/buses`);
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+
+                estadoApi.textContent = 'Conectado a Java / SQL';
+                tbody.innerHTML = '';
+
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="vacio">No hay buses registrados.</td></tr>';
+                    return;
+                }
+
+                data.forEach(bus => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><strong>${bus.placa || ''}</strong></td>
+                        <td>${[bus.marca, bus.modelo].filter(Boolean).join(' ') || '-'}</td>
+                        <td>${bus.capacidad ?? ''}</td>
+                        <td>${bus.estado || ''}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                estadoApi.textContent = 'Sin conexión API';
+                tbody.innerHTML = `<tr><td colspan="4" class="vacio">No se pudo cargar buses (${err.message}).</td></tr>`;
+            }
+        }
+
+        const formBus = document.getElementById('form-bus');
+        formBus.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const anioValor = document.getElementById('anio').value;
+            const payload = {
+                placa: document.getElementById('placa').value.trim(),
+                marca: document.getElementById('marca').value.trim() || null,
+                modelo: document.getElementById('modelo').value.trim() || null,
+                anio: anioValor ? parseInt(anioValor, 10) : null,
+                tipoBus: document.getElementById('tipoBus').value.trim() || null,
+                capacidad: parseInt(document.getElementById('capacidad').value, 10),
+                estado: document.getElementById('estadoBus').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/buses`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const body = await res.json();
+
+                if (!res.ok) {
+                    alert(body.error || 'Error al guardar el bus.');
+                    return;
+                }
+
+                alert(body.mensaje || 'Bus guardado.');
+                formBus.reset();
+                cargarBuses();
+            } catch (err) {
+                alert('Error de red al guardar el bus: ' + err.message);
+            }
+        });
+
+        cargarBuses();
+    </script>
+</body>
+</html>
