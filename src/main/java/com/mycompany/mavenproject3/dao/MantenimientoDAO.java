@@ -86,4 +86,36 @@ public class MantenimientoDAO {
             return ps.executeUpdate() > 0;
         }
     }
+    
+    public boolean cambiarEstado(int idMantenimiento, String nuevoEstado) throws SQLException {
+        try (Connection conn = ConexionBD.obtenerConexion()) {
+            conn.setAutoCommit(false);
+            try {
+                int filas;
+                try (PreparedStatement ps = conn.prepareStatement(
+                        "UPDATE Mantenimiento SET Estado = ? WHERE IdMantenimiento = ?")) {
+                    ps.setString(1, nuevoEstado);
+                    ps.setInt(2, idMantenimiento);
+                    filas = ps.executeUpdate();
+                }
+                String estadoBus = "En proceso".equals(nuevoEstado) ? "Mantenimiento"
+                                 : "Finalizado".equals(nuevoEstado) ? "Disponible" : null;
+                if (estadoBus != null) {
+                    try (PreparedStatement pb = conn.prepareStatement(
+                            "UPDATE Bus SET Estado = ? WHERE IdBus = (SELECT IdBus FROM Mantenimiento WHERE IdMantenimiento = ?)")) {
+                        pb.setString(1, estadoBus);
+                        pb.setInt(2, idMantenimiento);
+                        pb.executeUpdate();
+                    }
+                }
+                conn.commit();
+                return filas > 0;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
 }

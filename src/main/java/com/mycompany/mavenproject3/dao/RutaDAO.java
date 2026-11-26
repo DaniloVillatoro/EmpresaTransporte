@@ -62,4 +62,14 @@ public class RutaDAO {
             return ps.executeUpdate() > 0;
         }
     }
+    
+    public boolean actualizarEstado(int id, String nuevoEstado) throws SQLException {
+        String sql = "UPDATE Ruta SET Estado = ? WHERE IdRuta = ?";
+        try (Connection conn = ConexionBD.obtenerConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
 }

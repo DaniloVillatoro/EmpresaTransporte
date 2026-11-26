@@ -72,4 +72,14 @@ public class ClienteDAO {
             return ps.executeUpdate() > 0;
         }
     }
+    
+     public boolean actualizarEstado(int id, String nuevoEstado) throws SQLException {
+        String sql = "UPDATE Cliente SET Estado = ? WHERE IdCliente = ?";
+        try (Connection conn = ConexionBD.obtenerConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
 }

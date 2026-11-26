@@ -82,4 +82,71 @@ public class BusDAO {
             return ps.executeUpdate() > 0;
         }
     }
+    
+    public boolean actualizarEstado(int id, String nuevoEstado) throws SQLException {
+        String sql = "UPDATE Bus SET Estado = ? WHERE IdBus = ?";
+        try (Connection conn = ConexionBD.obtenerConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nuevoEstado);
+            ps.setInt(2, id);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Inserta el bus y genera automaticamente sus asientos (1..capacidad)
+     * en una sola transaccion. Ubicacion: columnas 1 y 4 = Ventana, 2 y 3 = Pasillo.
+     * @return el IdBus generado
+     */
+    public int insertarConAsientos(Bus bus) throws SQLException {
+        String sqlB = "INSERT INTO Bus (Placa, Marca, Modelo, Anio, TipoBus, Capacidad, FechaAdquisicion, Estado) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlA = "INSERT INTO Asiento (IdBus, NumeroAsiento, Tipo, Ubicacion, Estado) VALUES (?, ?, 'Normal', ?, 'Disponible')";
+        try (Connection conn = ConexionBD.obtenerConexion()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement ps = conn.prepareStatement(sqlB, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                ps.setString(1, bus.getPlaca());
+                ps.setString(2, bus.getMarca());
+                ps.setString(3, bus.getModelo());
+                if (bus.getAnio() != null) {
+                    ps.setInt(4, bus.getAnio());
+                } else {
+                    ps.setNull(4, java.sql.Types.INTEGER);
+                }
+                ps.setString(5, bus.getTipoBus());
+                ps.setInt(6, bus.getCapacidad());
+                if (bus.getFechaAdquisicion() != null) {
+                    ps.setDate(7, java.sql.Date.valueOf(bus.getFechaAdquisicion()));
+                } else {
+                    ps.setNull(7, java.sql.Types.DATE);
+                }
+                ps.setString(8, bus.getEstado() != null ? bus.getEstado() : "Disponible");
+                ps.executeUpdate();
+                int id;
+                try (ResultSet keys = ps.getGeneratedKeys()) {
+                    if (!keys.next()) {
+                        throw new SQLException("No se obtuvo el IdBus generado.");
+                    }
+                    id = keys.getInt(1);
+                }
+                try (PreparedStatement pa = conn.prepareStatement(sqlA)) {
+                    for (int n = 1; n <= bus.getCapacidad(); n++) {
+                        int col = (n - 1) % 4;
+                        pa.setInt(1, id);
+                        pa.setInt(2, n);
+                        pa.setString(3, (col == 0 || col == 3) ? "Ventana" : "Pasillo");
+                        pa.addBatch();
+                    }
+                    pa.executeBatch();
+                }
+                conn.commit();
+                return id;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
 }

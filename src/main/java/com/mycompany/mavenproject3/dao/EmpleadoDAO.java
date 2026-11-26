@@ -86,4 +86,33 @@ public class EmpleadoDAO {
             return ps.executeUpdate() > 0;
         }
     }
+    
+    public Empleado buscarPorUsuario(String usuario) throws SQLException {
+        String sql = "SELECT IdEmpleado, Nombre, Apellido, Identidad, Telefono, Correo, "
+                   + "Cargo, Usuario, ContrasenaHash, FechaContratacion, Salario, Estado FROM Empleado WHERE Usuario = ?";
+        try (Connection conn = ConexionBD.obtenerConexion();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, usuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+                Empleado e = new Empleado();
+                e.setIdEmpleado(rs.getInt("IdEmpleado"));
+                e.setNombre(rs.getString("Nombre"));
+                e.setApellido(rs.getString("Apellido"));
+                e.setIdentidad(rs.getString("Identidad"));
+                e.setTelefono(rs.getString("Telefono"));
+                e.setCorreo(rs.getString("Correo"));
+                e.setCargo(rs.getString("Cargo"));
+                e.setUsuario(rs.getString("Usuario"));
+                e.setContrasenaHash(rs.getString("ContrasenaHash"));
+                java.sql.Date f = rs.getDate("FechaContratacion");
+                e.setFechaContratacion(f != null ? f.toLocalDate() : null);
+                e.setSalario(rs.getBigDecimal("Salario"));
+                e.setEstado(rs.getString("Estado"));
+                return e;
+            }
+        }
+    }
 }

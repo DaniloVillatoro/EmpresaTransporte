@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="boleto_individual" pageWidth="440" pageHeight="330" columnWidth="400" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<style name="base" isDefault="true" fontName="DejaVu Sans" fontSize="9"/>
+	<parameter name="ID_BOLETO" class="java.lang.Integer"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<queryString><![CDATA[SELECT bo.CodigoBoleto, c.Nombre + ' ' + c.Apellido AS Cliente, c.Identidad,
+ o.Ciudad + ' - ' + d.Ciudad AS Ruta,
+ CONVERT(varchar(10), h.FechaSalida, 103) + '  ' + CONVERT(varchar(5), h.HoraSalida, 108) AS Salida,
+ a.NumeroAsiento, bu.Placa AS Bus, bo.Precio, mp.Nombre AS Metodo, bo.Estado,
+ CONVERT(varchar(16), bo.FechaCompra, 120) AS Compra, e.Nombre + ' ' + e.Apellido AS Cajero
+FROM Boleto bo
+JOIN Cliente c ON c.IdCliente = bo.IdCliente
+JOIN Disponibilidad_Asiento da ON da.IdDisponibilidad = bo.IdDisponibilidad
+JOIN Asiento a ON a.IdAsiento = da.IdAsiento
+JOIN Horario h ON h.IdHorario = da.IdHorario
+JOIN Bus bu ON bu.IdBus = h.IdBus
+JOIN Ruta r ON r.IdRuta = h.IdRuta
+JOIN Terminal o ON o.IdTerminal = r.TerminalOrigen
+JOIN Terminal d ON d.IdTerminal = r.TerminalDestino
+LEFT JOIN Pago p ON p.IdBoleto = bo.IdBoleto AND p.EstadoPago = 'Aprobado'
+LEFT JOIN Metodo_Pago mp ON mp.IdMetodoPago = p.IdMetodoPago
+LEFT JOIN Empleado e ON e.IdEmpleado = bo.IdEmpleado
+WHERE bo.IdBoleto = $P{ID_BOLETO}]]></queryString>
+	<field name="CodigoBoleto" class="java.lang.String"/>
+	<field name="Cliente" class="java.lang.String"/>
+	<field name="Identidad" class="java.lang.String"/>
+	<field name="Ruta" class="java.lang.String"/>
+	<field name="Salida" class="java.lang.String"/>
+	<field name="NumeroAsiento" class="java.lang.Integer"/>
+	<field name="Bus" class="java.lang.String"/>
+	<field name="Precio" class="java.math.BigDecimal"/>
+	<field name="Metodo" class="java.lang.String"/>
+	<field name="Estado" class="java.lang.String"/>
+	<field name="Compra" class="java.lang.String"/>
+	<field name="Cajero" class="java.lang.String"/>
+	<detail>
+		<band height="272">
+			<staticText><reportElement x="0" y="0" width="400" height="34" forecolor="#FFFFFF" mode="Opaque" backcolor="#1F6FD1"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="16" isBold="true"/></textElement><text><![CDATA[TRANSPORTE HN]]></text></staticText>
+			<staticText><reportElement x="0" y="34" width="200" height="18" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="9" isBold="false"/></textElement><text><![CDATA[Boleto de viaje]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="200" y="34" width="200" height="18" forecolor="#1F6FD1"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{CodigoBoleto}]]></textFieldExpression></textField>
+			<staticText><reportElement x="0" y="60" width="90" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><text><![CDATA[Pasajero]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="74" width="250" height="18" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="11" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{Cliente}]]></textFieldExpression></textField>
+			<staticText><reportElement x="250" y="60" width="150" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><text><![CDATA[Identidad]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="250" y="74" width="150" height="18" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="10" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Identidad}]]></textFieldExpression></textField>
+			<staticText><reportElement x="0" y="100" width="90" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><text><![CDATA[Ruta]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="114" width="400" height="20" forecolor="#14508F"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="13" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{Ruta}]]></textFieldExpression></textField>
+			<staticText><reportElement x="0" y="142" width="200" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><text><![CDATA[Salida]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="156" width="200" height="18" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="11" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{Salida}]]></textFieldExpression></textField>
+			<staticText><reportElement x="200" y="142" width="100" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><text><![CDATA[Bus]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="200" y="156" width="100" height="18" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="11" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{Bus}]]></textFieldExpression></textField>
+			<staticText><reportElement x="300" y="142" width="100" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><text><![CDATA[Asiento]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="300" y="156" width="100" height="28" forecolor="#1F6FD1"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="20" isBold="true"/></textElement><textFieldExpression><![CDATA[$F{NumeroAsiento}]]></textFieldExpression></textField>
+			<line><reportElement x="0" y="188" width="400" height="1" forecolor="#D0D0D4"/></line>
+			<staticText><reportElement x="0" y="194" width="100" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><text><![CDATA[Total pagado]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="208" width="200" height="24" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="16" isBold="true"/></textElement><textFieldExpression><![CDATA["L " + new java.text.DecimalFormat("#,##0.00").format($F{Precio})]]></textFieldExpression></textField>
+			<staticText><reportElement x="200" y="194" width="200" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><text><![CDATA[Método de pago]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="200" y="208" width="200" height="18" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="10" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Metodo}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="240" width="400" height="14" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="7" isBold="false"/></textElement><textFieldExpression><![CDATA["Emitido: " + $F{Compra} + "   ·   Atendió: " + $F{Cajero}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="254" width="400" height="14" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="7" isBold="false"/></textElement><textFieldExpression><![CDATA["Presentarse 30 min antes de la salida con su identidad. Estado: " + $F{Estado}]]></textFieldExpression></textField>
+		</band>
+	</detail>
+</jasperReport>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="boletos_vendidos" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30">
+	<style name="base" isDefault="true" fontName="DejaVu Sans" fontSize="9"/>
+	<parameter name="FECHA_INI" class="java.util.Date"/>
+	<parameter name="FECHA_FIN" class="java.util.Date"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<queryString><![CDATA[SELECT bo.CodigoBoleto, c.Nombre + ' ' + c.Apellido AS Cliente, o.Ciudad + ' - ' + d.Ciudad AS Ruta,
+h.FechaSalida, a.NumeroAsiento, bo.Precio, bo.Estado
+FROM Boleto bo
+JOIN Cliente c ON c.IdCliente = bo.IdCliente
+JOIN Disponibilidad_Asiento da ON da.IdDisponibilidad = bo.IdDisponibilidad
+JOIN Asiento a ON a.IdAsiento = da.IdAsiento
+JOIN Horario h ON h.IdHorario = da.IdHorario
+JOIN Ruta r ON r.IdRuta = h.IdRuta
+JOIN Terminal o ON o.IdTerminal = r.TerminalOrigen
+JOIN Terminal d ON d.IdTerminal = r.TerminalDestino
+WHERE bo.FechaCompra >= $P{FECHA_INI} AND bo.FechaCompra < DATEADD(day, 1, $P{FECHA_FIN})
+ORDER BY bo.FechaCompra]]></queryString>
+	<field name="CodigoBoleto" class="java.lang.String"/>
+	<field name="Cliente" class="java.lang.String"/>
+	<field name="Ruta" class="java.lang.String"/>
+	<field name="FechaSalida" class="java.sql.Date"/>
+	<field name="NumeroAsiento" class="java.lang.Integer"/>
+	<field name="Precio" class="java.math.BigDecimal"/>
+	<field name="Estado" class="java.lang.String"/>
+	<variable name="TOTAL" class="java.math.BigDecimal" calculation="Sum"><variableExpression><![CDATA[$F{Estado}.equals("Pagado") ? $F{Precio} : java.math.BigDecimal.ZERO]]></variableExpression></variable>
+	<variable name="CANTIDAD" class="java.lang.Integer" calculation="Sum"><variableExpression><![CDATA[$F{Estado}.equals("Pagado") ? 1 : 0]]></variableExpression></variable>
+	<title>
+		<band height="66">
+			<staticText><reportElement x="0" y="4" width="535" height="30" forecolor="#1F6FD1"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="18" isBold="true"/></textElement><text><![CDATA[Boletos vendidos]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="34" width="535" height="18" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="9" isBold="false"/></textElement><textFieldExpression><![CDATA["Del " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{FECHA_INI}) + " al " + new java.text.SimpleDateFormat("dd/MM/yyyy").format($P{FECHA_FIN})]]></textFieldExpression></textField>
+			<staticText><reportElement x="335" y="4" width="200" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement><text><![CDATA[Transporte HN]]></text></staticText>
+			<line><reportElement x="0" y="58" width="535" height="1" forecolor="#1F6FD1"/></line>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="22">
+			<staticText><reportElement x="0" y="0" width="85" height="22" forecolor="#33363D" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Código]]></text></staticText>
+			<staticText><reportElement x="85" y="0" width="120" height="22" forecolor="#33363D" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Cliente]]></text></staticText>
+			<staticText><reportElement x="205" y="0" width="115" height="22" forecolor="#33363D" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Ruta]]></text></staticText>
+			<staticText><reportElement x="320" y="0" width="55" height="22" forecolor="#33363D" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Salida]]></text></staticText>
+			<staticText><reportElement x="375" y="0" width="40" height="22" forecolor="#33363D" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Asiento]]></text></staticText>
+			<staticText><reportElement x="415" y="0" width="50" height="22" forecolor="#33363D" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Precio (L)]]></text></staticText>
+			<staticText><reportElement x="465" y="0" width="70" height="22" forecolor="#33363D" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Estado]]></text></staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<textField isBlankWhenNull="true"><reportElement x="0" y="0" width="85" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{CodigoBoleto}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="85" y="0" width="120" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Cliente}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="205" y="0" width="115" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Ruta}]]></textFieldExpression></textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true"><reportElement x="320" y="0" width="55" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{FechaSalida}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="375" y="0" width="40" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{NumeroAsiento}]]></textFieldExpression></textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true"><reportElement x="415" y="0" width="50" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Precio}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="465" y="0" width="70" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Estado}]]></textFieldExpression></textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22">
+			<line><reportElement x="0" y="2" width="535" height="1" forecolor="#D0D0D4"/></line>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="4" width="435" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="7" isBold="false"/></textElement><textFieldExpression><![CDATA["Generado por " + $P{USUARIO} + " el " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="435" y="4" width="100" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="7" isBold="false"/></textElement><textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression></textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="40">
+			<line><reportElement x="0" y="4" width="535" height="1" forecolor="#1F6FD1"/></line>
+			<staticText><reportElement x="0" y="8" width="300" height="22" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement><text><![CDATA[Boletos pagados:]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="105" y="8" width="60" height="22" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement><textFieldExpression><![CDATA[$V{CANTIDAD}]]></textFieldExpression></textField>
+			<staticText><reportElement x="300" y="8" width="115" height="22" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement><text><![CDATA[Total vendido:]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="415" y="8" width="120" height="22" forecolor="#1F6FD1"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement><textFieldExpression><![CDATA["L " + new java.text.DecimalFormat("#,##0.00").format($V{TOTAL})]]></textFieldExpression></textField>
+		</band>
+	</summary>
+</jasperReport>

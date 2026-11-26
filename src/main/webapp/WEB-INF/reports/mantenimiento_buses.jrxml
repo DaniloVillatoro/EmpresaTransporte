@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mantenimiento_buses" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="30" rightMargin="30" topMargin="30" bottomMargin="30">
+	<style name="base" isDefault="true" fontName="DejaVu Sans" fontSize="9"/>
+	<parameter name="USUARIO" class="java.lang.String"/>
+	<queryString><![CDATA[SELECT b.Placa, b.Marca, m.Fecha, m.Tipo, m.Descripcion, m.Kilometraje, m.Costo, m.Estado
+FROM Mantenimiento m JOIN Bus b ON b.IdBus = m.IdBus
+ORDER BY b.Placa, m.Fecha DESC]]></queryString>
+	<field name="Placa" class="java.lang.String"/>
+	<field name="Marca" class="java.lang.String"/>
+	<field name="Fecha" class="java.sql.Date"/>
+	<field name="Tipo" class="java.lang.String"/>
+	<field name="Descripcion" class="java.lang.String"/>
+	<field name="Kilometraje" class="java.lang.Integer"/>
+	<field name="Costo" class="java.math.BigDecimal"/>
+	<field name="Estado" class="java.lang.String"/>
+	<variable name="COSTO_TOTAL" class="java.math.BigDecimal" calculation="Sum"><variableExpression><![CDATA[$F{Costo}]]></variableExpression></variable>
+	<group name="Bus"><groupExpression><![CDATA[$F{Placa}]]></groupExpression>
+	<groupHeader>
+		<band height="24">
+			<textField isBlankWhenNull="true"><reportElement mode="Opaque" backcolor="#D6E7FB" x="0" y="2" width="535" height="20" forecolor="#14508F"/>
+				<box leftPadding="6" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement><textFieldExpression><![CDATA["Bus " + $F{Placa} + "  ·  " + $F{Marca}]]></textFieldExpression></textField>
+		</band>
+	</groupHeader>
+	</group>
+	<title>
+		<band height="66">
+			<staticText><reportElement x="0" y="4" width="535" height="30" forecolor="#1F6FD1"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="18" isBold="true"/></textElement><text><![CDATA[Mantenimiento de buses]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="34" width="535" height="18" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="9" isBold="false"/></textElement><textFieldExpression><![CDATA["Historial completo de la flota"]]></textFieldExpression></textField>
+			<staticText><reportElement x="335" y="4" width="200" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement><text><![CDATA[Transporte HN]]></text></staticText>
+			<line><reportElement x="0" y="58" width="535" height="1" forecolor="#1F6FD1"/></line>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="22">
+			<staticText><reportElement x="0" y="0" width="60" height="22" forecolor="#1C1D21" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Fecha]]></text></staticText>
+			<staticText><reportElement x="60" y="0" width="90" height="22" forecolor="#1C1D21" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Tipo]]></text></staticText>
+			<staticText><reportElement x="150" y="0" width="205" height="22" forecolor="#1C1D21" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Descripción]]></text></staticText>
+			<staticText><reportElement x="355" y="0" width="55" height="22" forecolor="#1C1D21" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Km]]></text></staticText>
+			<staticText><reportElement x="410" y="0" width="65" height="22" forecolor="#1C1D21" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Costo (L)]]></text></staticText>
+			<staticText><reportElement x="475" y="0" width="60" height="22" forecolor="#1C1D21" mode="Opaque" backcolor="#F1F1F3"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="true"/></textElement><text><![CDATA[Estado]]></text></staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true"><reportElement x="0" y="0" width="60" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Fecha}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="60" y="0" width="90" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Tipo}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="150" y="0" width="205" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Descripcion}]]></textFieldExpression></textField>
+			<textField pattern="#,##0" isBlankWhenNull="true"><reportElement x="355" y="0" width="55" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Kilometraje}]]></textFieldExpression></textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true"><reportElement x="410" y="0" width="65" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Right" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Costo}]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="475" y="0" width="60" height="20" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"><bottomPen lineWidth="0.5" lineColor="#E6E6E8"/></box><textElement textAlignment="Left" verticalAlignment="Middle"><font size="8" isBold="false"/></textElement><textFieldExpression><![CDATA[$F{Estado}]]></textFieldExpression></textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="22">
+			<line><reportElement x="0" y="2" width="535" height="1" forecolor="#D0D0D4"/></line>
+			<textField isBlankWhenNull="true"><reportElement x="0" y="4" width="435" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Left" verticalAlignment="Middle"><font size="7" isBold="false"/></textElement><textFieldExpression><![CDATA["Generado por " + $P{USUARIO} + " el " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm").format(new java.util.Date())]]></textFieldExpression></textField>
+			<textField isBlankWhenNull="true"><reportElement x="435" y="4" width="100" height="16" forecolor="#6B6F78"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="7" isBold="false"/></textElement><textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression></textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="40">
+			<line><reportElement x="0" y="4" width="535" height="1" forecolor="#1F6FD1"/></line>
+			<staticText><reportElement x="0" y="8" width="355" height="22" forecolor="#1C1D21"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement><text><![CDATA[Costo total de mantenimiento:]]></text></staticText>
+			<textField isBlankWhenNull="true"><reportElement x="355" y="8" width="180" height="22" forecolor="#1F6FD1"/>
+				<box leftPadding="4" rightPadding="4"/><textElement textAlignment="Right" verticalAlignment="Middle"><font size="10" isBold="true"/></textElement><textFieldExpression><![CDATA["L " + new java.text.DecimalFormat("#,##0.00").format($V{COSTO_TOTAL})]]></textFieldExpression></textField>
+		</band>
+	</summary>
+</jasperReport>
