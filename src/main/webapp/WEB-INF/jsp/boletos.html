@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boletos · Transporte HN</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 6v6M16 6v6M2 12h19.6M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/>
+        <circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/>
+      </svg>
+      <span>Transporte HN</span>
+    </div>
+    <nav class="nav">
+      <a href="/panel">Panel principal</a>
+      <a href="/boletos" class="active">Boletos</a>
+      <a href="/horarios">Horarios</a>
+      <a href="/rutas">Rutas</a>
+      <a href="/buses">Buses</a>
+      <a href="/conductores">Conductores</a>
+      <a href="/clientes">Clientes</a>
+      <a href="/mantenimiento">Mantenimiento</a>
+      <a href="/pagos">Pagos</a>
+      <a href="/reportes">Reportes</a>
+      <a href="/auditoria">Auditoría</a>
+    </nav>
+    <div class="user-menu">
+      <span id="usuarioActual">Empleado</span>
+      <a class="btn sm" href="/logout">Salir</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Boletos</h1>
+      <p class="subtitle">Venta en taquilla, historial y anulaciones</p>
+    </div>
+    <div id="flashContainer"></div>
+    <div class="grid">
+      <section class="panel">
+        <div class="toolbar">
+          <h2 style="margin:0">Boletos emitidos</h2>
+          <input type="search" placeholder="Buscar código, cliente, ruta…" data-filtro="#tb">
+        </div>
+        <div class="table-wrap">
+          <table id="tb">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Cliente</th>
+                <th>Ruta / salida</th>
+                <th class="num">Asiento</th>
+                <th class="num">Precio</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbodyBoletos">
+              <tr><td colspan="7" class="empty">Aún no hay boletos.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Vender boleto</h2>
+      <form method="post" action="/boletos" id="formVentaBoleto">
+        <input type="hidden" name="_csrf" value="">
+        <input type="hidden" name="accion" value="vender">
+        <label for="idHorario">Horario / Salida</label>
+        <select id="idHorario" name="idHorario" required>
+          <option value="">Seleccionar salida…</option>
+        </select>
+        <div class="row2">
+          <div>
+            <label for="idCliente">Cliente</label>
+            <select id="idCliente" name="idCliente" required>
+              <option value="">Seleccionar cliente…</option>
+            </select>
+          </div>
+          <div>
+            <label for="idAsiento">Asiento</label>
+            <select id="idAsiento" name="idAsiento" required>
+              <option value="">Seleccionar asiento…</option>
+            </select>
+          </div>
+        </div>
+        <div class="row2">
+          <div>
+            <label for="precio">Precio (L)</label>
+            <input id="precio" type="number" name="precio" step="0.01" min="0" required>
+          </div>
+          <div>
+            <label for="metodoPago">Método de pago</label>
+            <select id="metodoPago" name="metodoPago" required>
+              <option value="Efectivo">Efectivo</option>
+              <option value="Tarjeta">Tarjeta</option>
+              <option value="Transferencia">Transferencia</option>
+            </select>
+          </div>
+        </div>
+        <label for="referencia">Referencia (opcional)</label>
+        <input id="referencia" name="referencia" maxlength="60" placeholder="N° baucher o transferencia">
+        <button class="btn primary block" type="submit">Emitir boleto</button>
+      </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

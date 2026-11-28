@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Buses · Transporte HN</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 6v6M16 6v6M2 12h19.6M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/>
+        <circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/>
+      </svg>
+      <span>Transporte HN</span>
+    </div>
+    <nav class="nav">
+      <a href="/panel">Panel principal</a>
+      <a href="/boletos">Boletos</a>
+      <a href="/horarios">Horarios</a>
+      <a href="/rutas">Rutas</a>
+      <a href="/buses" class="active">Buses</a>
+      <a href="/conductores">Conductores</a>
+      <a href="/clientes">Clientes</a>
+      <a href="/mantenimiento">Mantenimiento</a>
+      <a href="/pagos">Pagos</a>
+      <a href="/reportes">Reportes</a>
+      <a href="/auditoria">Auditoría</a>
+    </nav>
+    <div class="user-menu">
+      <span id="usuarioActual">Empleado</span>
+      <a class="btn sm" href="/logout">Salir</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Buses</h1>
+      <p class="subtitle">Flota: al registrar un bus se crean sus asientos automáticamente</p>
+    </div>
+    <div id="flashContainer"></div>
+    <div class="grid even">
+      <section class="panel">
+        <h2>Registrar bus</h2>
+        <form method="post" action="/buses" id="formBus">
+          <input type="hidden" name="_csrf" value="">
+          <div class="row2">
+            <div><label>Placa</label><input name="placa" placeholder="HN-204" required maxlength="15"></div>
+            <div><label>Capacidad</label><input type="number" name="capacidad" min="1" max="80" required></div>
+          </div>
+          <div class="row2">
+            <div><label>Marca</label><input name="marca" maxlength="50"></div>
+            <div><label>Modelo</label><input name="modelo" maxlength="50"></div>
+          </div>
+          <div class="row3">
+            <div><label>Año</label><input type="number" name="anio" min="1900" max="2100"></div>
+            <div><label>Tipo</label><input name="tipoBus" placeholder="Ejecutivo" maxlength="30"></div>
+            <div><label>Adquirido</label><input type="date" name="fechaAdquisicion"></div>
+          </div>
+          <button class="btn primary block" type="submit">Guardar bus</button>
+        </form>
+      </section>
+      <section class="panel">
+        <div class="toolbar">
+          <h2 style="margin:0">Flota</h2>
+          <input type="search" placeholder="Buscar…" data-filtro="#tb">
+        </div>
+        <div class="table-wrap">
+          <table id="tb">
+            <thead>
+              <tr>
+                <th>Placa</th>
+                <th>Unidad</th>
+                <th class="num">Cap.</th>
+                <th>Tipo</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbodyBuses">
+              <tr><td colspan="6" class="empty">Sin buses.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

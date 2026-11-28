@@ -13,12 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
-/**
- * Filtro unico de seguridad:
- *  - exige sesion iniciada (excepto login y archivos estaticos)
- *  - genera y valida el token CSRF en todos los POST
- *  - limita Auditoria y Reportes al cargo "Administrador" (el cajero solo imprime boletos)
- */
 @WebFilter("/*")
 public class AuthFilter implements Filter {
 
@@ -35,8 +29,21 @@ public class AuthFilter implements Filter {
             sesion.setAttribute("csrf", Seguridad.tokenAleatorio());
         }
 
-        boolean estatico = ruta.startsWith("/css/") || ruta.startsWith("/js/") || ruta.startsWith("/img/");
+        boolean estatico = ruta.startsWith("/css/")
+                || ruta.startsWith("/js/")
+                || ruta.startsWith("/img/")
+                || ruta.endsWith(".html");
         if (estatico) {
+            chain.doFilter(req, res);
+            return;
+        }
+
+        if (ruta.equals("/resources/login") && "POST".equalsIgnoreCase(rq.getMethod())) {
+            chain.doFilter(req, res);
+            return;
+        }
+
+        if (ruta.startsWith("/resources/")) {
             chain.doFilter(req, res);
             return;
         }
@@ -61,7 +68,7 @@ public class AuthFilter implements Filter {
         }
 
         boolean soloAdmin = ruta.startsWith("/auditoria")
-                || (ruta.startsWith("/reportes") && !"boleto".equals(rq.getParameter("tipo")));   // el cajero si puede imprimir boletos
+                || (ruta.startsWith("/reportes") && !"boleto".equals(rq.getParameter("tipo")));
         if (soloAdmin && !"Administrador".equalsIgnoreCase(usuario.getCargo())) {
             rs.sendError(HttpServletResponse.SC_FORBIDDEN, "Esta seccion es solo para Administradores.");
             return;

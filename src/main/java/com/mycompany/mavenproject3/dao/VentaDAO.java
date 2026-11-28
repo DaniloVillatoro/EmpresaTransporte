@@ -42,7 +42,7 @@ public class VentaDAO {
             try {
                 // 1) asiento
                 try (PreparedStatement ps = conn.prepareStatement(
-                        "SELECT Estado FROM Disponibilidad_Asiento WITH (UPDLOCK, ROWLOCK) WHERE IdDisponibilidad = ?")) {
+                        "SELECT Estado FROM Disponibilidad_Asiento WHERE IdDisponibilidad = ? FOR UPDATE")) {
                     ps.setInt(1, idDisponibilidad);
                     try (ResultSet rs = ps.executeQuery()) {
                         if (!rs.next()) {
@@ -70,7 +70,7 @@ public class VentaDAO {
                     }
                     try (PreparedStatement ps = conn.prepareStatement(
                             "INSERT INTO Cliente (Nombre, Apellido, Identidad, Telefono, Correo, Direccion, FechaRegistro, Estado) "
-                          + "VALUES (?, ?, ?, NULL, NULL, NULL, GETDATE(), 'Activo')", Statement.RETURN_GENERATED_KEYS)) {
+                          + "VALUES (?, ?, ?, NULL, NULL, NULL, CURRENT_TIMESTAMP, 'Activo')", Statement.RETURN_GENERATED_KEYS)) {
                         ps.setString(1, nombre.trim());
                         ps.setString(2, apellido.trim());
                         ps.setString(3, identidad);
@@ -87,7 +87,7 @@ public class VentaDAO {
                 int idBoleto;
                 try (PreparedStatement ps = conn.prepareStatement(
                         "INSERT INTO Boleto (CodigoBoleto, IdCliente, IdDisponibilidad, IdEmpleado, FechaCompra, Precio, MetodoCompra, Estado) "
-                      + "VALUES (?, ?, ?, ?, GETDATE(), ?, 'Taquilla', 'Pagado')", Statement.RETURN_GENERATED_KEYS)) {
+                      + "VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, ?, 'Taquilla', 'Pagado')", Statement.RETURN_GENERATED_KEYS)) {
                     ps.setString(1, codigo);
                     ps.setInt(2, idCliente);
                     ps.setInt(3, idDisponibilidad);
@@ -102,7 +102,7 @@ public class VentaDAO {
 
                 // 4) asiento ocupado
                 try (PreparedStatement ps = conn.prepareStatement(
-                        "UPDATE Disponibilidad_Asiento SET Estado = 'Ocupado', FechaActualizacion = GETDATE() WHERE IdDisponibilidad = ?")) {
+                        "UPDATE Disponibilidad_Asiento SET Estado = 'Ocupado', FechaActualizacion = CURRENT_TIMESTAMP WHERE IdDisponibilidad = ?")) {
                     ps.setInt(1, idDisponibilidad);
                     ps.executeUpdate();
                 }
@@ -110,7 +110,7 @@ public class VentaDAO {
                 // 5) pago
                 try (PreparedStatement ps = conn.prepareStatement(
                         "INSERT INTO Pago (IdBoleto, IdMetodoPago, Monto, FechaPago, ReferenciaPago, EstadoPago) "
-                      + "VALUES (?, ?, ?, GETDATE(), ?, 'Aprobado')")) {
+                      + "VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, 'Aprobado')")) {
                     ps.setInt(1, idBoleto);
                     ps.setInt(2, idMetodoPago);
                     ps.setBigDecimal(3, precio);
@@ -140,7 +140,7 @@ public class VentaDAO {
                 int idDisp;
                 BigDecimal precio;
                 try (PreparedStatement ps = conn.prepareStatement(
-                        "SELECT IdDisponibilidad, Precio, Estado FROM Boleto WITH (UPDLOCK) WHERE IdBoleto = ?")) {
+                        "SELECT IdDisponibilidad, Precio, Estado FROM Boleto WHERE IdBoleto = ? FOR UPDATE")) {
                     ps.setInt(1, idBoleto);
                     try (ResultSet rs = ps.executeQuery()) {
                         if (!rs.next()) {
@@ -158,14 +158,14 @@ public class VentaDAO {
                     ps.executeUpdate();
                 }
                 try (PreparedStatement ps = conn.prepareStatement(
-                        "UPDATE Disponibilidad_Asiento SET Estado = 'Disponible', FechaActualizacion = GETDATE() WHERE IdDisponibilidad = ?")) {
+                        "UPDATE Disponibilidad_Asiento SET Estado = 'Disponible', FechaActualizacion = CURRENT_TIMESTAMP WHERE IdDisponibilidad = ?")) {
                     ps.setInt(1, idDisp);
                     ps.executeUpdate();
                 }
                 int idPago = -1;
                 int idMetodo = -1;
                 try (PreparedStatement ps = conn.prepareStatement(
-                        "SELECT TOP 1 IdPago, IdMetodoPago FROM Pago WHERE IdBoleto = ? ORDER BY IdPago DESC")) {
+                        "SELECT IdPago, IdMetodoPago FROM Pago WHERE IdBoleto = ? ORDER BY IdPago DESC LIMIT 1")) {
                     ps.setInt(1, idBoleto);
                     try (ResultSet rs = ps.executeQuery()) {
                         if (rs.next()) {
@@ -181,7 +181,7 @@ public class VentaDAO {
                     }
                     try (PreparedStatement ps = conn.prepareStatement(
                             "INSERT INTO Reembolso (IdPago, IdEmpleado, IdMetodoPago, FechaReembolso, Monto, Motivo, Estado) "
-                          + "VALUES (?, ?, ?, GETDATE(), ?, 'Anulacion de boleto en taquilla', 'Procesado')")) {
+                          + "VALUES (?, ?, ?, CURRENT_TIMESTAMP, ?, 'Anulacion de boleto en taquilla', 'Procesado')")) {
                         ps.setInt(1, idPago);
                         ps.setInt(2, idEmpleado);
                         ps.setInt(3, idMetodo);

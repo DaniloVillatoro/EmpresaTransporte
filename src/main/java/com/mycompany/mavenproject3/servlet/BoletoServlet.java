@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Boletos: listado, venta en taquilla, anulacion y mapa de asientos (JSON para el panel).
@@ -47,10 +46,10 @@ public class BoletoServlet extends BaseServlet {
     }
 
     private void enviarAsientosJson(HttpServletRequest rq, HttpServletResponse rs) throws SQLException, IOException {
-        List<Map<String, Object>> asientos = vistaDAO.asientosDeHorario(entero(rq, "idHorario"));
+        List<VistaDAO.Fila> asientos = vistaDAO.asientosDeHorario(entero(rq, "idHorario"));
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < asientos.size(); i++) {
-            Map<String, Object> a = asientos.get(i);
+            VistaDAO.Fila a = asientos.get(i);
             if (i > 0) {
                 sb.append(',');
             }

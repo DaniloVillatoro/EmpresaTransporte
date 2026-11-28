@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rutas · Transporte HN</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="ico" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 6v6M16 6v6M2 12h19.6M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3"/>
+        <circle cx="7" cy="18" r="2"/><path d="M9 18h5"/><circle cx="16" cy="18" r="2"/>
+      </svg>
+      <span>Transporte HN</span>
+    </div>
+    <nav class="nav">
+      <a href="/panel">Panel principal</a>
+      <a href="/boletos">Boletos</a>
+      <a href="/horarios">Horarios</a>
+      <a href="/rutas" class="active">Rutas</a>
+      <a href="/buses">Buses</a>
+      <a href="/conductores">Conductores</a>
+      <a href="/clientes">Clientes</a>
+      <a href="/mantenimiento">Mantenimiento</a>
+      <a href="/pagos">Pagos</a>
+      <a href="/reportes">Reportes</a>
+      <a href="/auditoria">Auditoría</a>
+    </nav>
+    <div class="user-menu">
+      <span id="usuarioActual">Empleado</span>
+      <a class="btn sm" href="/logout">Salir</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-header">
+      <h1>Rutas</h1>
+      <p class="subtitle">Rutas entre terminales</p>
+    </div>
+    <div id="flashContainer"></div>
+    <div class="grid even">
+      <div>
+        <section class="panel">
+          <h2>Nueva ruta</h2>
+          <form method="post" action="/rutas" id="formRuta">
+            <input type="hidden" name="_csrf" value="">
+            <label>Nombre</label>
+            <input name="nombreRuta" placeholder="Ej. SPS - TGU" required maxlength="100">
+            <div class="row2">
+              <div>
+                <label>Origen</label>
+                <select name="terminalOrigen" id="selectOrigen" required>
+                  <option value="">…</option>
+                </select>
+              </div>
+              <div>
+                <label>Destino</label>
+                <select name="terminalDestino" id="selectDestino" required>
+                  <option value="">…</option>
+                </select>
+              </div>
+            </div>
+            <div class="row2">
+              <div><label>Distancia (km)</label><input type="number" name="distanciaKm" step="0.01" min="0.01" required></div>
+              <div><label>Duración estimada</label><input type="time" name="duracionEstimada" required></div>
+            </div>
+            <button class="btn primary block" type="submit">Guardar ruta</button>
+          </form>
+        </section>
+
+        <section class="panel">
+          <h2>Nueva terminal</h2>
+          <form method="post" action="/rutas" id="formTerminal">
+            <input type="hidden" name="_csrf" value="">
+            <input type="hidden" name="accion" value="terminal">
+            <div class="row2">
+              <div><label>Nombre</label><input name="nombre" required maxlength="100"></div>
+              <div><label>Ciudad</label><input name="ciudad" required maxlength="80"></div>
+            </div>
+            <label>Dirección</label>
+            <input name="direccion" maxlength="200">
+            <div class="row2">
+              <div><label>Teléfono</label><input name="telefono" maxlength="20"></div>
+              <div><label>Correo</label><input type="email" name="correo" maxlength="100"></div>
+            </div>
+            <button class="btn block" type="submit">Guardar terminal</button>
+          </form>
+        </section>
+      </div>
+
+      <section class="panel">
+        <h2>Rutas registradas</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ruta</th>
+                <th>Origen → Destino</th>
+                <th class="num">Km</th>
+                <th>Duración</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tbodyRutas">
+              <tr><td colspan="6" class="empty">Sin rutas.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 style="margin-top:26px">Terminales</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Ciudad</th>
+                <th>Teléfono</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyTerminales">
+              <tr><td colspan="4" class="empty">Sin terminales.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

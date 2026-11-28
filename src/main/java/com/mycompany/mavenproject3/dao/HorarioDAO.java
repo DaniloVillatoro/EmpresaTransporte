@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.mavenproject3.dao;
+
 import com.mycompany.mavenproject3.modelo.Horario;
 import java.sql.Connection;
 import java.sql.Date;
@@ -12,12 +13,11 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
+
 /**
  *
  * @author Dell
  */
-
-
 public class HorarioDAO {
 
     public List<Horario> listarTodos() throws SQLException {
@@ -73,7 +73,7 @@ public class HorarioDAO {
             return ps.executeUpdate() > 0;
         }
     }
-    
+
     public boolean actualizarEstado(int id, String nuevoEstado) throws SQLException {
         String sql = "UPDATE Horario SET Estado = ? WHERE IdHorario = ?";
         try (Connection conn = ConexionBD.obtenerConexion();
@@ -93,7 +93,7 @@ public class HorarioDAO {
         String sqlH = "INSERT INTO Horario (IdRuta, IdBus, IdConductor, FechaSalida, HoraSalida, FechaLlegada, HoraLlegada, Estado) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlD = "INSERT INTO Disponibilidad_Asiento (IdHorario, IdAsiento, Estado, FechaActualizacion) "
-                    + "SELECT ?, IdAsiento, 'Disponible', GETDATE() FROM Asiento WHERE IdBus = ? AND Estado = 'Disponible'";
+                    + "SELECT ?, IdAsiento, 'Disponible', CURRENT_TIMESTAMP FROM Asiento WHERE IdBus = ? AND Estado = 'Disponible'";
         try (Connection conn = ConexionBD.obtenerConexion()) {
             conn.setAutoCommit(false);
             try (PreparedStatement ps = conn.prepareStatement(sqlH, java.sql.Statement.RETURN_GENERATED_KEYS)) {

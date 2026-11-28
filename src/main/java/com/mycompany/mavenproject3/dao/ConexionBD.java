@@ -19,7 +19,7 @@ public final class ConexionBD {
     private static final String DEFAULT_URL =
             "jdbc:postgresql://ep-lingering-scene-bdo52v5s-pooler.c-8.us-east-2.aws.neon.tech:5432/neondb?sslmode=require";
     private static final String DEFAULT_USER = "neondb_owner";
-    private static final String DEFAULT_PASS = "DB_PASSWORD";
+    private static final String DEFAULT_PASS = "npg_hu3iLBPomGf1";
 
     private ConexionBD() { }
 

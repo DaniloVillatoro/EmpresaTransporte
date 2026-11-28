@@ -12,7 +12,7 @@
     <div class="stat"><span>Buses en ruta</span><strong>${ind.busesEnRuta}</strong></div>
     <div class="stat"><span>En mantenimiento</span><strong>${ind.enMantenimiento}</strong></div>
   </div>
-
+ 
   <div class="grid">
     <div>
       <section class="panel">

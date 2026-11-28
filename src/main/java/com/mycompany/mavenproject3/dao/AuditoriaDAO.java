@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.mavenproject3.dao;
+
 import com.mycompany.mavenproject3.modelo.Auditoria;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,14 +18,13 @@ import java.util.List;
  *
  * @author Dell
  */
-
 public class AuditoriaDAO {
 
     public List<Auditoria> listarRecientes(int limite) throws SQLException {
         List<Auditoria> lista = new ArrayList<>();
-        String sql = "SELECT TOP (?) IdAuditoria, TablaAfectada, IdRegistro, Accion, ValorAnterior, "
+        String sql = "SELECT IdAuditoria, TablaAfectada, IdRegistro, Accion, ValorAnterior, "
                    + "ValorNuevo, Usuario, FechaCambio, Equipo, Aplicacion "
-                   + "FROM Auditoria ORDER BY IdAuditoria DESC";
+                   + "FROM Auditoria ORDER BY IdAuditoria DESC LIMIT ?";
 
         try (Connection conn = ConexionBD.obtenerConexion();
              PreparedStatement ps = conn.prepareStatement(sql)) {
