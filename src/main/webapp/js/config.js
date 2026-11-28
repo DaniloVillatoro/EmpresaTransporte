@@ -1,7 +1,7 @@
 /* Configuración central de conexión con el backend */
 const CONFIG = {
   // Cambia a true para probar en local y a false para Render
-  USAR_LOCAL: true,
+  USAR_LOCAL: false,
 
   URL_LOCAL: "http://localhost:8080/mavenproject3/resources",
   URL_PRODUCCION: "https://empresatransporte.onrender.com/mavenproject3/resources",
